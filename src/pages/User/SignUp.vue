@@ -1,0 +1,67 @@
+<template>
+  <div class="q-pa-sm row justify-center">
+    <div class="q-gutter-md" style="max-width: 500px">
+        <div class="q-pt-lg text-weight-light text-h4 text-primary" >
+            Sign Up Form
+        </div>
+      <form @submit.prevent="onSignUp">
+          <q-input v-model="email" name="email" label="Email"/>
+          <q-input v-model="password" type="password" name="password" label="Password" />
+          <q-input v-model="confirmPassword" type="password" name="confirmPassword" label="Confirm Password" />
+          <small class="text-red">{{comparePasswords}}</small>
+
+        <q-space/>
+        <div class="q-mt-sm row justify-right">
+            <q-btn type="submit" no-caps color="primary" :disabled="!formIsValid"  >Sign Up</q-btn>
+        </div>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script>
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
+
+export default {
+
+  name: 'SignUp',
+  data () {
+    return {
+      email: '',
+      password: '',
+      confirmPassword: ''
+    }
+  },
+
+  computed: {
+    formIsValid () {
+      return this.email !== '' &&
+            this.password !== '' &&
+            this.confirmPassword !== ''
+    },
+
+    comparePasswords () {
+      return this.password !== this.confirmPassword ? 'Password Mismatch' : ''
+    }
+  },
+
+  methods: {
+    async onSignUp () {
+      try {
+        await firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(() => {
+          alert('Account created!')
+          this.$router.push('/')
+        })
+      } catch (err) {
+        alert(err.message)
+      }
+    }
+  }
+
+}
+</script>
+
+<style scoped>
+
+</style>
